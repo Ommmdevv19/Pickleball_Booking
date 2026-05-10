@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import random
 import json
+import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,17 +18,27 @@ def create_booking(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            # Check availability using facility_id (standard) or fallback to court
+            raw_date = data.get('date')
+            db_date = raw_date
+            for fmt in ('%Y-%m-%d', '%d-%m-%Y'):
+                try:
+                    db_date = datetime.datetime.strptime(raw_date, fmt).strftime('%Y-%m-%d')
+                    break
+                except:
+                    continue
+
             court_id = data.get('facility_id') or data.get('court')
             is_avail = mongodb_utils.is_court_available(
                 court_id, 
-                data.get('date'), 
+                db_date, 
                 data.get('tFrom'), 
                 data.get('tTo')
             )
             if not is_avail:
                 return JsonResponse({'status': 'error', 'message': 'This slot is already booked! Please select another time or court.'}, status=400)
                 
+            # Use normalized date for saving
+            data['date'] = db_date
             booking_id = mongodb_utils.save_booking(data)
             if 'phone' in data:
                 mongodb_utils.create_user_if_not_exists({'phone': data['phone'], 'first_name': data.get('name')})
@@ -35,6 +46,26 @@ def create_booking(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error'}, status=400)
+
+@csrf_exempt
+def check_availability(request):
+    """API to check if a specific slot is taken"""
+    court_id = request.GET.get('court_id')
+    raw_date = request.GET.get('date')
+    t_from = request.GET.get('tFrom')
+    t_to = request.GET.get('tTo')
+    
+    # Normalize date
+    db_date = raw_date
+    for fmt in ('%Y-%m-%d', '%d-%m-%Y'):
+        try:
+            db_date = datetime.datetime.strptime(raw_date, fmt).strftime('%Y-%m-%d')
+            break
+        except:
+            continue
+
+    is_avail = mongodb_utils.is_court_available(court_id, db_date, t_from, t_to)
+    return JsonResponse({'available': is_avail})
 
 @csrf_exempt
 def send_otp(request):
@@ -185,3 +216,27 @@ def get_user_bookings(request):
         return JsonResponse({'status': 'error', 'message': 'Phone required'}, status=400)
     bookings = mongodb_utils.get_bookings_by_phone(phone)
     return JsonResponse(json.loads(json_util.dumps(bookings)), safe=False)
+
+def public_court_status(request):
+    """Publicly accessible endpoint to see which slots are busy"""
+    raw_date = request.GET.get('date')
+    
+    # Normalize date
+    db_date = raw_date
+    for fmt in ('%Y-%m-%d', '%d-%m-%Y'):
+        try:
+            db_date = datetime.datetime.strptime(raw_date, fmt).strftime('%Y-%m-%d')
+            break
+        except:
+            continue
+
+    courts = mongodb_utils.get_court_status(db_date)
+    
+    # SECURITY: Strip out user names and phone numbers for public view
+    for court in courts:
+        court['current_user'] = "Occupied" if court['status'] == 'busy' else None
+        if 'all_slots' in court:
+            for slot in court['all_slots']:
+                slot['name'] = "Booked"
+                
+    return JsonResponse(json.loads(json_util.dumps(courts)), safe=False)

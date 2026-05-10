@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = dateInput.value;
         if(!date) return;
 
-        const res = await fetch(`/admin-panel/api/courts/?date=${date}`);
+        const res = await fetch(`/api/public/courts/?date=${date}`);
         if(res.ok) {
             window.currentCourtsData = await res.json();
             applyCourtLocks();
