@@ -590,6 +590,46 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
+    /* Steady Booking Form */
+    #bk-selection-container {
+      min-height: 180px; /* Prevents jumping during sport switch */
+      transition: opacity 0.3s ease;
+    }
+
+    /* Steady Court Cards */
+    .court-card {
+      min-height: 280px;
+      display: flex !important;
+      flex-direction: column;
+    }
+
+    .court-slots-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 150px;
+      padding-right: 4px;
+      margin-top: auto;
+    }
+
+    .court-slots-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .court-slots-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 10px;
+    }
+
+    /* Smooth Fade-in for dynamic content */
+    @keyframes fadeInSteady {
+      from { opacity: 0.8; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .court-card, .booking-form-wrap {
+      animation: fadeInSteady 0.4s ease-out;
+    }
+
     .card-header {
       display: flex;
       align-items: center;
@@ -3114,7 +3154,7 @@
         const hasMore = allSlots.length > 2;
 
         return `
-      <div class="court-card" style="display:block; height:auto;">
+      <div class="court-card">
         <div class="court-status-bar">
           <span class="court-name">${c.name}</span>
           <div style="display:flex; align-items:center; gap:10px;">
