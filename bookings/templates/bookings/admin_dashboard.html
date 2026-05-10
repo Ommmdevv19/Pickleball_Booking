@@ -578,7 +578,23 @@
       color: var(--danger);
     }
 
-    /* ── Card ──────────────────────────────────────── */
+    /* Steady Booking Form */
+    #bk-selection-container {
+        min-height: 180px; /* Prevents jumping during sport switch */
+    }
+
+    /* Steady Mode: No motion */
+    .court-card, .booking-form-wrap, .card, .stat-card {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .form-row.vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
     .card {
       background: var(--glass-bg);
       backdrop-filter: blur(24px);
@@ -588,46 +604,6 @@
       overflow: hidden;
       margin-bottom: 24px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Steady Booking Form */
-    #bk-selection-container {
-      min-height: 180px; /* Prevents jumping during sport switch */
-      transition: opacity 0.3s ease;
-    }
-
-    /* Steady Court Cards */
-    .court-card {
-      min-height: 280px;
-      display: flex !important;
-      flex-direction: column;
-    }
-
-    .court-slots-list {
-      flex: 1;
-      overflow-y: auto;
-      max-height: 150px;
-      padding-right: 4px;
-      margin-top: auto;
-    }
-
-    .court-slots-list::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    .court-slots-list::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 10px;
-    }
-
-    /* Smooth Fade-in for dynamic content */
-    @keyframes fadeInSteady {
-      from { opacity: 0.8; transform: translateY(2px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .court-card, .booking-form-wrap {
-      animation: fadeInSteady 0.4s ease-out;
     }
 
     .card-header {
@@ -2423,7 +2399,11 @@
             </svg></span><span class="nav-label">Settings</span>
         </button>
         <button class="nav-item" onclick="window.location.href='/admin-logout/'">
-          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg></span>
           <span class="nav-label">Logout</span>
         </button>
       </nav>
@@ -2467,9 +2447,13 @@
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
           </svg>
         </div>
-        <div class="topbar-btn" onclick="window.location.href='/admin-logout/'" title="Logout" style="color:var(--danger)">
+        <div class="topbar-btn" onclick="window.location.href='/admin-logout/'" title="Logout"
+          style="color:var(--danger)">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
         </div>
         <div class="time-display" id="clockDisplay"></div>
       </div>
@@ -2778,7 +2762,7 @@
 
         <div class="booking-section">
           <div class="section-title">4. Your Details</div>
-          <div class="form-row cols-2">
+          <div class="form-row vertical">
             <input class="glass-input" id="bk-name" placeholder="Full Name (A-Z only)"
               oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')" style="height: 56px;">
             <div class="phone-input-wrapper">
@@ -3154,7 +3138,7 @@
         const hasMore = allSlots.length > 2;
 
         return `
-      <div class="court-card">
+      <div class="court-card" style="display:block; height:auto;">
         <div class="court-status-bar">
           <span class="court-name">${c.name}</span>
           <div style="display:flex; align-items:center; gap:10px;">

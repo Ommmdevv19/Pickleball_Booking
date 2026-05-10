@@ -1607,3 +1607,31 @@ h1, h2, h3, .logo {
     background: rgba(255, 255, 255, 0.25);
     transform: rotate(18deg);
 }
+
+/* ── Mobile & Stability Fixes ── */
+@media (max-width: 600px) {
+    /* Stack name and phone up and down */
+    .input-row, .details-row {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .glass-input {
+        width: 100% !important;
+    }
+
+    .booking-section {
+        padding: 1rem !important;
+    }
+}
+
+/* Steady Mode: Disable all jumping/motion during booking */
+#bookingForm *, .booking-container *, .modal-content * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+
+.booking-container {
+    min-height: 550px; /* Lock height to prevent jumping */
+}
