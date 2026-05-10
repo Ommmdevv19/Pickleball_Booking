@@ -1,14 +1,16 @@
 import pymongo
+import os
 from django.conf import settings
 from datetime import datetime, timedelta
 import uuid
 
 # MongoDB Connection Configuration
-MONGO_URI = "mongodb://localhost:27017/"
-DB_NAME = "playarena_db"
+MONGO_URI = os.environ.get("MONGODB_URI", "mongodb://localhost:27017/")
+DB_NAME = os.environ.get("MONGODB_NAME", "playarena_db")
 
 def get_db():
-    client = pymongo.MongoClient(MONGO_URI)
+    # Added timeout to prevent hanging on cloud servers
+    client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     return client[DB_NAME]
 
 def is_court_available(court_id, date_str, tFrom, tTo):
