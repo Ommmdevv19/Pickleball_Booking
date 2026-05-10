@@ -240,3 +240,12 @@ def public_court_status(request):
                 slot['name'] = "Booked"
                 
     return JsonResponse(json.loads(json_util.dumps(courts)), safe=False)
+
+def validate_user(request):
+    """Checks if a user still exists in the database"""
+    phone = request.GET.get('phone')
+    if not phone:
+        return JsonResponse({'exists': False})
+    
+    user = mongodb_utils.get_user_by_phone(phone)
+    return JsonResponse({'exists': user is not None})

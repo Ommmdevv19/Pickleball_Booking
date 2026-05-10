@@ -149,6 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateAuthUI();
 
+    // VALIDATION: Check if logged-in user still exists in DB
+    if (currentUser && currentUser.phone) {
+        fetch(`/validate-user/?phone=${currentUser.phone}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists === false) {
+                    console.warn("User no longer exists in DB. Logging out...");
+                    logout();
+                }
+            })
+            .catch(err => console.error("User validation failed:", err));
+    }
+
     // --- OTP Input Auto-focus ---
     const otpInputs = document.querySelectorAll('.otp-input');
     otpInputs.forEach((input, index) => {

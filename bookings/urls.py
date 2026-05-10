@@ -19,4 +19,5 @@ urlpatterns = [
     path('admin-panel/api/courts/', views.admin_api_courts, name='admin_api_courts'),
     path('get-user-bookings/', views.get_user_bookings, name='get_user_bookings'),
     path('api/public/courts/', views.public_court_status, name='public_court_status'),
+    path('validate-user/', views.validate_user, name='validate_user'),
 ]
