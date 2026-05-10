@@ -80,8 +80,18 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('active');
         document.body.classList.add('modal-open');
 
-        // Fetch from DB
-        fetch(`/get-user-bookings/?phone=${currentUser.phone}`)
+        // DOUBLE CHECK: Validate user exists before showing history
+        fetch(`/validate-user/?phone=${currentUser.phone}&t=${Date.now()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists === false) {
+                    logout();
+                    return;
+                }
+            });
+
+        // Fetch from DB with cache-busting
+        fetch(`/get-user-bookings/?phone=${currentUser.phone}&t=${Date.now()}`)
             .then(res => res.json())
             .then(bookings => {
                 if (!bookings || bookings.length === 0) {
@@ -149,17 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateAuthUI();
 
-    // VALIDATION: Check if logged-in user still exists in DB
+    // VALIDATION: Check if logged-in user still exists in DB (Cache-busted)
     if (currentUser && currentUser.phone) {
-        fetch(`/validate-user/?phone=${currentUser.phone}`)
+        fetch(`/validate-user/?phone=${currentUser.phone}&t=${Date.now()}`)
             .then(res => res.json())
             .then(data => {
                 if (data.exists === false) {
-                    console.warn("User no longer exists in DB. Logging out...");
+                    console.warn("USER NOT FOUND IN DB - FORCING LOGOUT");
                     logout();
                 }
             })
-            .catch(err => console.error("User validation failed:", err));
+            .catch(err => console.error("Validation failed:", err));
     }
 
     // --- OTP Input Auto-focus ---
@@ -518,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = dateInput.value;
         if(!date) return;
 
-        const res = await fetch(`/api/public/courts/?date=${date}`);
+        const res = await fetch(`/api/public/courts/?date=${date}&t=${Date.now()}`);
         if(res.ok) {
             window.currentCourtsData = await res.json();
             applyCourtLocks();
