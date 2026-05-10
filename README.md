@@ -8,21 +8,23 @@
 
 ### 📱 For Players
 *   **Instant Booking Portal:** A seamless, multi-step booking flow for Pickleball, Box Cricket, and Padel.
+*   **Verification System:** Secure booking with OTP verification (Default Testing OTP: **1234**).
 *   **Glassmorphic Design:** A premium, dark-mode interface that looks stunning on any device.
-*   **Real-Time Scheduling:** Check court availability and book slots instantly without manual coordination.
-*   **Mobile Optimized:** Designed specifically for a "native app" feel on mobile browsers.
+*   **Real-Time Scheduling:** Check court availability and book slots instantly.
 
-### 📊 For Administrators
+### 🛡️ For Administrators (Advanced Security)
+*   **Unified Admin Panel:** Access both login and management at a single URL: `/admin-panel/`.
+*   **Two-Factor Authentication (2FA):** Secured by Password + OTP verification for every session.
 *   **High-Density Dashboard:** Monitor revenue, booking counts, and repeat customer rates at a glance.
 *   **2x2 Court Matrix:** Track multiple courts simultaneously with a compact, real-time grid.
-*   **Small Widget System:** Manage long lists of bookings and customers with ultra-compact widgets, optimized for mobile efficiency.
-*   **Detailed View Modals:** Access full booking and customer profiles via quick-view "Eye" icons, keeping the main UI clean.
+*   **Detailed View Modals:** Access full booking and customer profiles via quick-view "Eye" icons.
 *   **Revenue Analytics:** Visualize performance trends with interactive charts and automated growth delta (↑/↓) calculations.
 
 ---
 
 ## 🛠️ Technical Stack
 *   **Backend:** Django (Python)
+*   **Authentication:** Django Auth + Custom 2FA Logic
 *   **Database:** MongoDB (via custom robust aggregation utilities) & SQLite (local auth/metadata)
 *   **Frontend:** Vanilla JS, CSS3 (Custom Glassmorphism), HTML5
 *   **Design Tokens:** Outfit & Inter Typography, Vibrant Accent Palettes
@@ -36,11 +38,12 @@ court_booking/
 │   ├── mongodb_utils.py    # Robust data aggregation & MongoDB integration
 │   ├── templates/          # Responsive HTML5 templates
 │   │   ├── index.html      # Player-facing booking portal
+│   │   ├── admin_login.html # Secure 2FA Login Page
 │   │   └── admin_dashboard.html # High-density Admin console
-│   └── views.py            # API & Page Routing
+│   └── views.py            # Unified Portal & API Routing
 ├── court_booking/          # Project Configuration
-├── db.sqlite3              # Local Database (Auth/Cache)
-└── manage.py               # Django Entry Point
+├── manage.py               # Django Entry Point
+└── requirements.txt        # Production dependencies
 ```
 
 ---
@@ -54,17 +57,29 @@ court_booking/
 
 2.  **Install dependencies:**
     ```bash
-    pip install django pymongo
+    pip install -r requirements.txt
     ```
 
-3.  **Run the server:**
+3.  **Setup Admin Account:**
+    ```bash
+    python manage.py createsuperuser
+    ```
+
+4.  **Run the server:**
     ```bash
     python manage.py runserver
     ```
 
-4.  **Access the platform:**
+5.  **Access the platform:**
     *   **User Portal:** `http://127.0.0.1:8000/`
-    *   **Admin Dashboard:** `http://127.0.0.1:8000/admin-panel/`
+    *   **Admin Panel:** `http://127.0.0.1:8000/admin-panel/`
+
+---
+
+## 🔑 Default Credentials (Testing)
+*   **Admin Username:** `admin`
+*   **Admin Password:** `admin123`
+*   **Global Testing OTP:** `1234` (for both Users and Admin)
 
 ---
 
