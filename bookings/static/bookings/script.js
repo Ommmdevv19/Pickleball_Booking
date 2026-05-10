@@ -150,23 +150,32 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.logout = () => {
-        localStorage.removeItem('playarena_user');
-        localStorage.removeItem('playarena_bookings'); // Clear local history on logout
+        // Clear EVERYTHING
+        localStorage.clear();
+        sessionStorage.clear();
+        // Clear cookies too
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+        
         currentUser = null;
         updateAuthUI();
-        window.location.reload();
+        window.location.href = "/"; // Hard redirect
     };
 
-    updateAuthUI();
-
-    // VALIDATION: Check if logged-in user still exists in DB (Cache-busted)
+    // VALIDATION: Check if logged-in user still exists in DB (Cache-busted & Aggressive)
     if (currentUser && currentUser.phone) {
         fetch(`/validate-user/?phone=${currentUser.phone}&t=${Date.now()}`)
             .then(res => res.json())
             .then(data => {
                 if (data.exists === false) {
-                    console.warn("USER NOT FOUND IN DB - FORCING LOGOUT");
-                    logout();
+                    console.warn("CRITICAL: User session invalidated by server.");
+                    // Force a clean logout
+                    localStorage.clear(); 
+                    currentUser = null;
+                    updateAuthUI();
+                    alert("Your session has expired or your account was deleted. Logging out...");
+                    window.location.href = "/"; // Force redirect to home
                 }
             })
             .catch(err => console.error("Validation failed:", err));
