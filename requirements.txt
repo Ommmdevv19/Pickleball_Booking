@@ -1,0 +1,6 @@
+django
+pymongo
+django-cors-headers
+requests
+gunicorn
+whitenoise

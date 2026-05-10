@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PlayArena - Premium Court Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'bookings/style.css' %}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px; height:24px;"><path d="M15.6 11.6L22 7L17 2L12.4 8.4M12.4 8.4L3.5 17.3C2.8 18 2.8 19.1 3.5 19.8L4.2 20.5C4.9 21.2 6 21.2 6.7 20.5L15.6 11.6ZM12.4 8.4L15.6 11.6"/><circle cx="9" cy="9" r="2"/></svg>
+            <span>PlayArena</span>
+        </div>
+        <div class="nav-right">
+            <div id="navAuth">
+                <button class="btn-primary-outline" onclick="openLoginModal()">Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-graphics">
+            <div class="sport-orb"></div>
+            <div class="sport-orb"></div>
+            <div class="sport-orb"></div>
+            <div class="hero-dot"></div>
+            <div class="hero-dot"></div>
+            <div class="hero-dot"></div>
+            <div class="hero-line"></div>
+            <div class="hero-line"></div>
+        </div>
+        <div class="hero-content">
+            <div class="badge">Ahmedabad's Premium Sports Hub</div>
+            <h1>Scan. Book.<br><span class="text-gradient">Play.</span></h1>
+            <p>Skip the WhatsApp messages and manual logs. Seamless booking for Pickleball, Box Cricket, and Padel.</p>
+            <a href="#booking" class="btn-primary">Reserve Your Slot</a>
+        </div>
+    </header>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="facilities">
+        <div class="section-header">
+            <h2>Our Facilities</h2>
+            <p>Premium courts with top-tier lighting and surfaces.</p>
+        </div>
+        <div class="facility-grid">
+            <div class="facility-card">
+                <div class="card-img" style="background-image: url('{% static 'bookings/pickleball.png' %}');"></div>
+                <div class="card-content">
+                    <h3>Pickleball Court</h3>
+                    <p>Professional grade surface, perfect for singles or doubles.</p>
+                    <div class="price">₹{{ prices.Pickleball|default:600 }} <span>/ hr</span></div>
+                    <button class="btn-secondary" onclick="scrollToBooking('Pickleball')">Select Court</button>
+                </div>
+            </div>
+            <div class="facility-card">
+                <div class="card-img" style="background-image: url('{% static 'bookings/cricket.png' %}');"></div>
+                <div class="card-content">
+                    <h3>Box Cricket</h3>
+                    <p>Enclosed astroturf box with floodlights for day/night matches.</p>
+                    <div class="price">₹{{ prices.Cricket|default:1200 }} <span>/ hr</span></div>
+                    <button class="btn-secondary" onclick="scrollToBooking('Box Cricket')">Select Court</button>
+                </div>
+            </div>
+            <div class="facility-card">
+                <div class="card-img" style="background-image: url('{% static 'bookings/padel.png' %}');"></div>
+                <div class="card-content">
+                    <h3>Padel Court</h3>
+                    <p>Glass-walled premium padel court imported from Spain.</p>
+                    <div class="price">₹{{ prices.Padel|default:1000 }} <span>/ hr</span></div>
+                    <button class="btn-secondary" onclick="scrollToBooking('Padel')">Select Court</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Portal -->
+    <section id="booking" class="booking-section">
+        <div class="booking-container glass-panel">
+            <div class="booking-header">
+                <h2>Instant Booking Portal</h2>
+                <p>Select your court and time slot.</p>
+            </div>
+            
+            <form id="bookingForm" class="booking-form">
+                <!-- Step 1: Sport Selection -->
+                <div class="form-group">
+                    <label>1. Select Facility</label>
+                    <div class="pill-group" id="facilityPills">
+                        <div class="pill active" data-value="Pickleball">Pickleball</div>
+                        <div class="pill" data-value="Box Cricket">Box Cricket</div>
+                        <div class="pill" data-value="Padel">Padel</div>
+                    </div>
+                    <input type="hidden" id="selectedFacility" value="Pickleball">
+                </div>
+
+                <!-- Pickleball Specifics -->
+                <div id="pickleballOptions" class="form-group conditional-group">
+                    <label>Select Playground</label>
+                    <div class="pill-group" id="playgroundPills">
+                        <div class="pill active" data-value="Playground 1">Playground 1</div>
+                        <div class="pill" data-value="Playground 2">Playground 2</div>
+                    </div>
+                    <input type="hidden" id="selectedPlayground" value="Playground 1">
+
+                    <label style="margin-top: 1.5rem;">Select Court</label>
+                    <div class="pill-group" id="courtPills">
+                        <div class="pill active" data-value="Court 1">Court 1</div>
+                        <div class="pill" data-value="Court 2">Court 2</div>
+                        <div class="pill" data-value="Court 3">Court 3</div>
+                        <div class="pill" data-value="Court 4">Court 4</div>
+                        <div class="pill" data-value="Court 5">Court 5</div>
+                        <div class="pill" data-value="Court 6">Court 6</div>
+                    </div>
+                    <input type="hidden" id="selectedCourt" value="Court 1">
+                </div>
+
+                <!-- Padel Specifics -->
+                <div id="padelOptions" class="form-group conditional-group hidden">
+                    <label>Select Playground</label>
+                    <div class="pill-group" id="padelPlaygroundPills">
+                        <div class="pill active" data-value="Playground 1">Playground 1</div>
+                    </div>
+                    <input type="hidden" id="selectedPadelPlayground" value="Playground 1">
+
+                    <label style="margin-top: 1.5rem;">Select Court</label>
+                    <div class="pill-group" id="padelCourtPills">
+                        <div class="pill active" data-value="Court 1">Court 1</div>
+                        <div class="pill" data-value="Court 2">Court 2</div>
+                    </div>
+                    <input type="hidden" id="selectedPadelCourt" value="Court 1">
+                </div>
+
+                <!-- Step 2: Date -->
+                <div class="form-group">
+                    <label>2. Choose Date</label>
+                    <input type="date" id="bookingDate" required class="glass-input">
+                </div>
+
+                <!-- Step 3: Time -->
+                <div class="form-group">
+                    <label>3. Select Time (24hr format)</label>
+                    <div class="time-range">
+                        <div class="time-box" id="boxFrom">
+                            <span class="time-label">FROM</span>
+                            <div class="time-display" id="displayFrom">--:-- <span class="clock-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span></div>
+                            <input type="hidden" id="timeFrom">
+                            <div class="time-dropdown" id="dropdownFrom"></div>
+                        </div>
+                        <div class="time-box" id="boxTo">
+                            <span class="time-label">TO</span>
+                            <div class="time-display" id="displayTo">--:-- <span class="clock-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span></div>
+                            <input type="hidden" id="timeTo">
+                            <div class="time-dropdown" id="dropdownTo"></div>
+                        </div>
+                    </div>
+                    <div id="durationDisplay" class="duration-display"></div>
+                </div>
+
+
+
+                <button type="submit" class="btn-primary w-100" style="margin-top: 2rem;">Confirm Booking & Pay</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:400px;">
+            <div class="modal-handle" onclick="document.getElementById('loginModal').classList.remove('active')"></div>
+            <div style="text-align:left; margin-bottom:1.5rem; display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <div>
+                    <h2 style="font-size:1.4rem; margin-bottom:0.1rem;">Welcome to PlayArena</h2>
+                    <p style="color:var(--text-secondary); font-size:0.9rem;">Enter your number to continue booking</p>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Full Name</label>
+                <input type="text" id="loginName" placeholder="Full Name (A-Z only)" class="glass-input" 
+                       oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <div class="phone-input-wrapper">
+                    <span class="phone-prefix">+91</span>
+                    <input type="tel" id="loginPhone" placeholder="9876543210" class="glass-input" 
+                           maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
+            <button class="btn-primary w-100" onclick="sendOTP()">Send OTP</button>
+            <p style="text-align:center; margin-top:1rem; font-size:0.8rem; color:var(--text-secondary);">By continuing, you agree to our terms.</p>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:400px;">
+            <div class="modal-handle" onclick="document.getElementById('otpModal').classList.remove('active')"></div>
+            <div style="text-align:left; margin-bottom:1.5rem; display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <div>
+                    <h2 style="font-size:1.4rem; margin-bottom:0.1rem;">Verification</h2>
+                    <p style="color:var(--text-secondary); font-size:0.9rem;">We've sent a 4-digit code to <span id="otpDisplayPhone" style="color:white; font-weight:600;"></span></p>
+                </div>
+            </div>
+            <div id="otpTimer" style="margin-top:0.5rem; font-size:0.85rem; color:var(--accent); font-weight:600;">
+                Code expires in <span id="timerDisplay">15:00</span>
+            </div>
+            <div class="form-group" style="display:flex; gap:0.8rem; justify-content:center; margin-top: 1rem;">
+                <input type="text" maxlength="1" inputmode="numeric" class="glass-input otp-input">
+                <input type="text" maxlength="1" inputmode="numeric" class="glass-input otp-input">
+                <input type="text" maxlength="1" inputmode="numeric" class="glass-input otp-input">
+                <input type="text" maxlength="1" inputmode="numeric" class="glass-input otp-input">
+            </div>
+            <button class="btn-primary w-100" onclick="verifyOTP()">Verify & Continue</button>
+            <p style="text-align:center; margin-top:1.2rem; font-size:0.85rem;">
+                <span style="color:var(--text-secondary);">Didn't receive it?</span>
+                <a href="#" style="color:var(--accent); text-decoration:none; font-weight:600;">Resend OTP</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:480px;">
+            <div class="modal-handle" onclick="closePaymentModal()"></div>
+            <div class="modal-header-alt">
+                <div class="payment-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <div>
+                    <h2 class="payment-title">Advance Payment</h2>
+                    <p class="payment-subtitle">Pay 50% advance to confirm your booking</p>
+                </div>
+            </div>
+
+            <div id="paymentSummary" class="payment-summary-card"></div>
+
+            <div class="payment-amount-card">
+                <div class="amount-item total">
+                    <span>Total Amount</span>
+                    <span id="totalAmount">—</span>
+                </div>
+                <div class="amount-item advance">
+                    <span class="advance-label">Advance (50%)</span>
+                    <span id="advanceAmount" class="advance-value">—</span>
+                </div>
+            </div>
+
+            <div class="payment-methods">
+                <span class="methods-title">Pay via App</span>
+                <div class="app-grid">
+                    <button class="pay-app-btn" onclick="payWithApp('gpay')">
+                        GPay
+                    </button>
+                    <button class="pay-app-btn" onclick="payWithApp('phonepe')">
+                        PhonePe
+                    </button>
+                    <button class="pay-app-btn" onclick="payWithApp('bhim')">
+                        BHIM
+                    </button>
+                </div>
+            </div>
+
+            <div class="manual-upi">
+                <label>Or Enter UPI ID Manually</label>
+                <div class="upi-input-wrapper">
+                    <input type="text" id="upiId" placeholder="yourname@upi" class="glass-input" autocomplete="off" inputmode="email">
+                </div>
+                <p class="input-hint">Example: name@okicici, number@paytm</p>
+            </div>
+
+            <div style="display:flex; gap:0.8rem;">
+                <button class="btn-secondary" style="width:auto; padding:0.8rem 1.5rem; margin:0;" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn-primary w-100" onclick="confirmPayment()">Confirm & Pay ₹<span id="advancePay">0</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Bill -->
+    <div id="floatingBill" class="floating-bill">
+        <div class="bill-trigger" onclick="document.getElementById('booking').scrollIntoView({behavior:'smooth'})">
+            <div class="bill-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </div>
+            <div class="bill-info">
+                <span class="bill-label">Current Tab</span>
+                <span id="billTotal" class="bill-total">₹0</span>
+            </div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">→</div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content glass-panel">
+            <div class="modal-handle" onclick="closeModal()"></div>
+            <div class="success-icon">✓</div>
+            <h2>Booking Confirmed!</h2>
+            <p id="modalDetails">Your slot has been booked.</p>
+            <p class="modal-subtext">A confirmation WhatsApp message has been sent to your number.</p>
+            <button class="btn-primary w-100" onclick="closeModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- My Bookings Modal -->
+    <div id="myBookingsModal" class="modal">
+        <div class="modal-content glass-panel" style="max-width:550px;">
+            <div class="modal-handle" onclick="closeMyBookings()"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h2 style="margin:0; display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--accent)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    My Bookings
+                </h2>
+                <button class="qty-btn" onclick="closeMyBookings()" style="font-size:1.1rem;">✕</button>
+            </div>
+            <div id="bookingsListContainer" class="bookings-list"></div>
+            <button class="btn-primary w-100" style="margin-top:1.5rem;" onclick="closeMyBookings()">Close</button>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="/" class="nav-item active">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Home</span>
+        </a>
+        <a href="javascript:void(0)" onclick="showMyBookings()" class="nav-item">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>History</span>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 5px;"><path d="M15.6 11.6L22 7L17 2L12.4 8.4M12.4 8.4L3.5 17.3C2.8 18 2.8 19.1 3.5 19.8L4.2 20.5C4.9 21.2 6 21.2 6.7 20.5L15.6 11.6ZM12.4 8.4L15.6 11.6"/><circle cx="9" cy="9" r="2"/></svg>
+                PlayArena
+            </div>
+            <div class="footer-links">
+                <a href="/">Home</a>
+                <a href="/#facilities">Facilities</a>
+            </div>
+            <p class="copyright">&copy; 2026 PlayArena Sports Hub. Ahmedabad, Gujarat.</p>
+        </div>
+    </footer>
+
+    <script>
+        const INITIAL_PRICES = {
+            'Pickleball': {{ prices.Pickleball|default:600 }},
+            'Box Cricket': {{ prices.Cricket|default:1200 }},
+            'Padel': {{ prices.Padel|default:1000 }}
+        };
+    </script>
+    <script src="{% static 'bookings/script.js' %}"></script>
+</body>
+</html>
