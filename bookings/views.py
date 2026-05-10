@@ -73,12 +73,14 @@ def send_otp(request):
         try:
             data = json.loads(request.body)
             phone = data.get('phone')
+            name = data.get('name')
             otp = "1234" # TEMPORARY FOR TESTING
             request.session['otp'] = otp
             request.session['otp_phone'] = phone
+            request.session['otp_name'] = name
             import time
             request.session['otp_time'] = time.time()
-            print(f"\n🚀 VERIFICATION CODE FOR {phone}: {otp} 🚀\n")
+            print(f"\n🚀 VERIFICATION CODE FOR {phone} ({name}): {otp} 🚀\n")
             return JsonResponse({'status': 'success'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
@@ -90,6 +92,10 @@ def verify_otp(request):
         data = json.loads(request.body)
         otp_input = data.get('otp')
         if otp_input == request.session.get('otp'):
+            phone = request.session.get('otp_phone')
+            name = request.session.get('otp_name')
+            if phone and name:
+                mongodb_utils.create_user(phone, name)
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'error', 'message': 'Invalid OTP'}, status=400)
     return JsonResponse({'status': 'error'}, status=400)

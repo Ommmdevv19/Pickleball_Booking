@@ -420,3 +420,17 @@ def get_bookings_by_phone(phone):
     db = get_db()
     # Find all bookings for this phone number, sorted by date and time
     return list(db.bills.find({"phone": phone}).sort([("date", -1), ("tFrom", -1)]))
+
+def get_user_by_phone(phone):
+    """Returns user document from users collection if exists"""
+    db = get_db()
+    return db.users.find_one({"phone": phone})
+
+def create_user(phone, name):
+    """Creates or updates a user in the users collection"""
+    db = get_db()
+    db.users.update_one(
+        {"phone": phone},
+        {"$set": {"name": name, "updated_at": datetime.now()}},
+        upsert=True
+    )
