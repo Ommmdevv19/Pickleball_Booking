@@ -608,6 +608,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call it once on page load to populate the default state
     updateAvailability();
 
+    // LIVE UPDATES: Refresh availability every 10 seconds automatically
+    setInterval(updateAvailability, 10000);
+
+    // Also refresh immediately when the user clicks the time boxes
+    boxFrom.addEventListener('click', updateAvailability);
+    boxTo.addEventListener('click', updateAvailability);
+
     // Form Submission → open Payment Modal
     const bookingForm = document.getElementById('bookingForm');
     const modal = document.getElementById('successModal');
