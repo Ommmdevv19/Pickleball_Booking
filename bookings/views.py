@@ -102,6 +102,12 @@ def verify_otp(request):
 
 @csrf_exempt
 def admin_panel(request):
+    # AUTO-CREATE ADMIN: Free way to ensure admin account exists on Render
+    from django.contrib.auth.models import User
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
+        print("✅ Auto-created Admin Account (admin/admin123) ✅")
+
     # 1. If not authenticated, handle or show login/2FA
     if not request.user.is_authenticated:
         if request.method == 'POST':
